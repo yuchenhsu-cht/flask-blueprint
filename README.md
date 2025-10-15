@@ -32,19 +32,36 @@ pip install -r requirements.txt
 ```
 FlaskBlueprint/
 ├── app/
-│   ├── __init__.py      # 應用程式初始化
-│   ├── routes/          # API 路由定義
+│   ├── __init__.py         # 應用程式初始化
+│   ├── models/            # 資料模型
+│   │   └── __init__.py
+│   ├── routes/           # API 路由定義
+│   │   ├── __init__.py
+│   │   ├── auth.py      # 認證相關路由
+│   │   └── main.py      # 主要路由
+│   ├── services/        # 業務邏輯
+│   │   └── __init__.py
+│   ├── static/          # 靜態檔案
 │   └── templates/       # HTML 模板
-├── config.py           # 設定檔
+├── config/             # 設定檔案
+│   ├── __init__.py
+│   ├── development.py
+│   └── production.py
+├── tests/             # 單元測試
 ├── requirements.txt    # 相依套件
 └── run.py             # 啟動程式
 ```
 
 ## Usage
 ```bash
-python modular_app.py
+# Development mode
+python run.py
+
+# Production mode
+export FLASK_ENV=production
+python run.py
 ```
-應用程式將會在 http://localhost:5001 啟動
+應用程式將會在 http://localhost:5000 啟動
 
 ## License
 MIT License
