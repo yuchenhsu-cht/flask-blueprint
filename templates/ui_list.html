@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury To-Do | 待辦清單</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f3f0; color: #4a4e69; }
+        .card-shadow { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border: 1px solid #e0d9d4; }
+        .checkmark { height: 1.5rem; width: 1.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-3xl mx-auto bg-white p-6 md:p-12 rounded-3xl card-shadow">
+        <h1 class="text-4xl font-extrabold mb-8 text-[#4a4e69] border-b-4 border-[#c79155]/60 pb-3">
+            待辦事項總覽 (UI 模組)
+        </h1>
+        
+        <a href="{{ url_for('ui.ui_add_task_form') }}" 
+           class="flex items-center justify-center w-full sm:w-auto bg-[#c79155] hover:bg-[#b5834b] text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-[#c79155]/30 transform hover:scale-[1.02] mb-10 transition duration-200">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            新增任務 (Create)
+        </a>
+
+        <div class="space-y-4">
+            {% for task in tasks %}
+            <div class="flex items-start justify-between p-5 rounded-xl card-shadow 
+                        {% if task.done %}
+                            bg-green-50 border-l-4 border-green-400 opacity-90
+                        {% else %}
+                            bg-white hover:bg-[#fcf7f4] hover:border-l-4 hover:border-[#a0b0c0]
+                        {% endif %}">
+                
+                <div class="flex items-start flex-grow mr-4">
+                    
+                    <form method="POST" action="{{ url_for('api.handle_single_task_ui', task_id=task.id) }}" class="inline mr-4 flex-shrink-0 pt-1">
+                        <input type="hidden" name="action" value="toggle">
+                        <button type="submit" class="custom-checkbox focus:outline-none" title="切換狀態">
+                            <span class="checkmark w-6 h-6 rounded-lg border-2 transition duration-150
+                                {% if task.done %}
+                                    bg-green-500 border-green-500 text-white shadow-md shadow-green-500/30
+                                {% else %}
+                                    bg-white border-gray-400 hover:bg-gray-100 text-transparent 
+                                {% endif %}">
+                                {% if task.done %}
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                {% endif %}
+                            </span>
+                        </button>
+                    </form>
+                    
+                    <span class="text-xl font-medium flex-grow pt-1 
+                        {% if task.done %}line-through text-gray-500{% else %}text-[#4a4e69]{% endif %}">
+                        {{ task.task }}
+                    </span>
+                </div>
+                
+                <div class="flex space-x-2 flex-shrink-0 pt-1">
+                    <a href="{{ url_for('ui.ui_edit_task_form', task_id=task.id) }}" 
+                       class="p-2 text-sm font-semibold rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 shadow-md transform hover:scale-110 transition duration-150"
+                       title="編輯">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.232 5.232z"></path></svg>
+                    </a>
+                    
+                    <form method="POST" action="{{ url_for('api.handle_single_task_ui', task_id=task.id) }}" onsubmit="return confirm('確定要刪除「{{ task.task }}」嗎？');" class="inline">
+                        <input type="hidden" name="action" value="delete">
+                        <button type="submit" 
+                                class="p-2 text-sm font-semibold rounded-full bg-red-100 text-red-600 hover:bg-red-200 shadow-md transform hover:scale-110 transition duration-150"
+                                title="刪除">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.013 21H7.987a2 2 0 01-1.92-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-gray-600 italic p-6 bg-gray-100 rounded-xl text-center border border-gray-300">
+                🎉 目前清單是空的，請新增您的第一個任務！
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>
